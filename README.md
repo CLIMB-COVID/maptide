@@ -1,11 +1,17 @@
 # `basemap`
 
 ## Setup
+Current setup instructions require Rust to be installed.
+
+Installation instructions for Rust can be found here: https://www.rust-lang.org/tools/install
+
+Once Rust is installed:
 ```
-$ git clone git@github.com:CLIMB-COVID/basemap.git
+$ git clone https://github.com/CLIMB-COVID/basemap.git
 $ cd basemap/
 $ python -m venv env
 $ source env/bin/activate
+$ pip install --upgrade pip
 $ pip install .
 ```
 

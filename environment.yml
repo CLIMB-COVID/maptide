@@ -1,7 +1,0 @@
-name: basemap
-channels:
-  - defaults
-  - conda-forge
-dependencies:
-  - rust
-  - pip
