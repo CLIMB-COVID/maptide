@@ -10,8 +10,6 @@ use pyo3::prelude::*;
 use std::collections::HashMap;
 use std::fs::File;
 
-// use noodles::bed; // TODO
-
 mod error;
 use error::BaseMapError;
 
@@ -365,7 +363,7 @@ fn merge_into_base_map(
     mut ins_maps: BaseMap,
     ref_lengths: &HashMap<String, usize>,
 ) -> Result<BaseMap, BaseMapError> {
-    for (ref_name, ref_length) in ref_lengths.iter() {
+    for (ref_name, _) in ref_lengths.iter() {
         let (ref_arr, offset) = ref_arrs
             .get(ref_name)
             .ok_or_else(|| BaseMapError::KeyNotFound)?;
