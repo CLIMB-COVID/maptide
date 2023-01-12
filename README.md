@@ -16,69 +16,41 @@ $ pip install .
 ```
 
 ## Usage
-##### Frequencies over all positions in the reference:
 ```
-$ basemap all /path/to/file.bam
-```
-
-All arguments:
-
-```
-$ basemap all -h
-usage: basemap all [-h] [--mapq MAPQ] [--baseq BASEQ] [--stats] [--decimals DECIMALS] bam
+$ basemap -h
+usage: basemap [-h] [--region REGION] [--index INDEX] [--mapq MAPQ] [--baseq BASEQ] [--noindex] [--stats] [--decimals DECIMALS] bam
 
 positional arguments:
   bam                  Path to BAM file
 
 optional arguments:
   -h, --help           show this help message and exit
-  --mapq MAPQ          Minimum mapping quality (default: 0)
-  --baseq BASEQ        Minimum base quality (default: 0)
-  --stats              Output additional per-position statistics
-  --decimals DECIMALS  Number of decimal places to display (default: 3)
-```
-
-##### Frequencies over a specific region (with an index file):
-```
-$ basemap iquery /path/to/file.bam chrom:start-end --index /path/to/anotherfile.bai
-```
-
-All arguments:
-
-```
-usage: basemap iquery [-h] [--index INDEX] [--mapq MAPQ] [--baseq BASEQ] [--stats] [--decimals DECIMALS] bam region
-
-positional arguments:
-  bam                  Path to BAM file
-  region               Region to view, specified in the form CHROM:START-END
-
-optional arguments:
-  -h, --help           show this help message and exit
+  --region REGION      Region to view, specified in the form CHROM:START-END (default: everything)
   --index INDEX        Path to index (BAI) file (default: </path/to/bam>.bai)
   --mapq MAPQ          Minimum mapping quality (default: 0)
   --baseq BASEQ        Minimum base quality (default: 0)
-  --stats              Output additional per-position statistics
+  --noindex            Do not use an index file when querying the BAM file (default: False)
+  --stats              Output additional per-position statistics (default: False)
   --decimals DECIMALS  Number of decimal places to display (default: 3)
+```
+
+##### Frequencies over all positions in the reference:
+```
+$ basemap /path/to/file.bam
+```
+
+##### Frequencies over a specific region (with an index file):
+If the index file has the same path as the BAM file, but with `.bai` appended on the end: 
+```
+$ basemap /path/to/file.bam --region chrom:start-end
+```
+
+Otherwise, the path needs to be specified:
+```
+$ basemap /path/to/file.bam --region chrom:start-end --index /path/to/index.bai
 ```
 
 ##### Frequencies over a specific region (without an index file):
 ```
-$ basemap query /path/to/file.bam chrom:start-end
-```
-
-All arguments:
-
-```
-usage: basemap query [-h] [--mapq MAPQ] [--baseq BASEQ] [--stats] [--decimals DECIMALS] bam region
-
-positional arguments:
-  bam                  Path to BAM file
-  region               Region to view, specified in the form CHROM:START-END
-
-optional arguments:
-  -h, --help           show this help message and exit
-  --mapq MAPQ          Minimum mapping quality (default: 0)
-  --baseq BASEQ        Minimum base quality (default: 0)
-  --stats              Output additional per-position statistics
-  --decimals DECIMALS  Number of decimal places to display (default: 3)
+$ basemap /path/to/file.bam chrom:start-end --region chrom:start-end --noindex
 ```

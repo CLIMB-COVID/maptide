@@ -4,4 +4,4 @@
 # if hasattr(basemap, "__all__"):
 #     __all__ = basemap.__all__
 
-from .api import all, query, iquery, parse_region
+from .api import query, parse_region
