@@ -1,4 +1,4 @@
-# `basemap`
+# `basecount`
 
 ## Setup
 Current setup instructions require Rust to be installed.
@@ -7,8 +7,8 @@ Installation instructions for Rust can be found here: https://www.rust-lang.org/
 
 Once Rust is installed:
 ```
-$ git clone https://github.com/CLIMB-COVID/basemap.git
-$ cd basemap/
+$ git clone https://github.com/CLIMB-COVID/basecount.git
+$ cd basecount/
 $ python -m venv env
 $ source env/bin/activate
 $ pip install --upgrade pip
@@ -17,8 +17,8 @@ $ pip install .
 
 ## Usage
 ```
-$ basemap -h
-usage: basemap [-h] [--region REGION] [--index INDEX] [--mapq MAPQ] [--baseq BASEQ] [--noindex] [--stats] [--decimals DECIMALS] bam
+$ basecount -h
+usage: basecount [-h] [--region REGION] [--index INDEX] [--mapq MAPQ] [--baseq BASEQ] [--noindex] [--stats] [--decimals DECIMALS] bam
 
 positional arguments:
   bam                  Path to BAM file
@@ -36,21 +36,21 @@ optional arguments:
 
 ##### Frequencies over all positions in the reference:
 ```
-$ basemap /path/to/file.bam
+$ basecount /path/to/file.bam
 ```
 
 ##### Frequencies over a specific region (with an index file):
 If the index file has the same path as the BAM file, but with `.bai` appended on the end: 
 ```
-$ basemap /path/to/file.bam --region chrom:start-end
+$ basecount /path/to/file.bam --region chrom:start-end
 ```
 
 Otherwise, the path needs to be specified:
 ```
-$ basemap /path/to/file.bam --region chrom:start-end --index /path/to/index.bai
+$ basecount /path/to/file.bam --region chrom:start-end --index /path/to/index.bai
 ```
 
 ##### Frequencies over a specific region (without an index file):
 ```
-$ basemap /path/to/file.bam chrom:start-end --region chrom:start-end --noindex
+$ basecount /path/to/file.bam chrom:start-end --region chrom:start-end --noindex
 ```

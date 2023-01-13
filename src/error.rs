@@ -4,7 +4,7 @@ use std::fmt::{self, Display};
 use std::io;
 
 #[derive(Debug)]
-pub enum BaseMapError {
+pub enum BaseCountError {
     KeyNotFound,
     IndexNotFound,
     InvalidBase,
@@ -18,41 +18,43 @@ pub enum BaseMapError {
     ParseError(region::ParseError),
 }
 
-impl From<io::Error> for BaseMapError {
+impl From<io::Error> for BaseCountError {
     fn from(e: io::Error) -> Self {
-        BaseMapError::IOError(e)
+        BaseCountError::IOError(e)
     }
 }
 
-impl From<region::ParseError> for BaseMapError {
+impl From<region::ParseError> for BaseCountError {
     fn from(e: region::ParseError) -> Self {
-        BaseMapError::ParseError(e)
+        BaseCountError::ParseError(e)
     }
 }
 
-impl Display for BaseMapError {
+impl Display for BaseCountError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            BaseMapError::KeyNotFound => f.write_str("KeyNotFound"),
-            BaseMapError::IndexNotFound => f.write_str("IndexNotFound"),
-            BaseMapError::InvalidBase => f.write_str("InvalidBase"),
-            BaseMapError::IntegerOverflow => f.write_str("IntegerOverlow"),
-            BaseMapError::AlignmentStartNotFound => f.write_str("AlignmentStartNotFound"),
-            BaseMapError::AlignmentEndNotFound => f.write_str("AlignmentEndNotFound"),
-            BaseMapError::MappingQualityNotFound => f.write_str("MappingQualityNotFound"),
-            BaseMapError::QualityScoreNotFound => f.write_str("QualityScoreNotFound"),
-            BaseMapError::ReferenceSequenceIDNotFound => f.write_str("ReferenceSequenceIDNotFound"),
-            BaseMapError::IOError(ref _e) => f.write_str("IOError"),
-            BaseMapError::ParseError(ref _e) => f.write_str("ParseError"),
+            BaseCountError::KeyNotFound => f.write_str("KeyNotFound"),
+            BaseCountError::IndexNotFound => f.write_str("IndexNotFound"),
+            BaseCountError::InvalidBase => f.write_str("InvalidBase"),
+            BaseCountError::IntegerOverflow => f.write_str("IntegerOverlow"),
+            BaseCountError::AlignmentStartNotFound => f.write_str("AlignmentStartNotFound"),
+            BaseCountError::AlignmentEndNotFound => f.write_str("AlignmentEndNotFound"),
+            BaseCountError::MappingQualityNotFound => f.write_str("MappingQualityNotFound"),
+            BaseCountError::QualityScoreNotFound => f.write_str("QualityScoreNotFound"),
+            BaseCountError::ReferenceSequenceIDNotFound => {
+                f.write_str("ReferenceSequenceIDNotFound")
+            }
+            BaseCountError::IOError(ref _e) => f.write_str("IOError"),
+            BaseCountError::ParseError(ref _e) => f.write_str("ParseError"),
         }
     }
 }
 
-impl Error for BaseMapError {
+impl Error for BaseCountError {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         match *self {
-            BaseMapError::IOError(ref e) => Some(e),
-            BaseMapError::ParseError(ref e) => Some(e),
+            BaseCountError::IOError(ref e) => Some(e),
+            BaseCountError::ParseError(ref e) => Some(e),
             _ => None,
         }
     }
