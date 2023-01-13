@@ -11,7 +11,7 @@ use std::collections::HashMap;
 use std::fs::File;
 
 mod error;
-use error::BaseCountError;
+use error::MapTideError;
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone, Copy)]
 struct Coordinate(usize, usize);
@@ -22,13 +22,13 @@ impl IntoPy<PyObject> for Coordinate {
     }
 }
 
-impl From<BaseCountError> for PyErr {
-    fn from(e: BaseCountError) -> Self {
+impl From<MapTideError> for PyErr {
+    fn from(e: MapTideError) -> Self {
         match e {
-            BaseCountError::KeyNotFound => PyKeyError::new_err(e.to_string()),
-            BaseCountError::IndexNotFound => PyIndexError::new_err(e.to_string()),
-            BaseCountError::IntegerOverflow => PyOverflowError::new_err(e.to_string()),
-            BaseCountError::IOError(e) => PyIOError::new_err(e.to_string()),
+            MapTideError::KeyNotFound => PyKeyError::new_err(e.to_string()),
+            MapTideError::IndexNotFound => PyIndexError::new_err(e.to_string()),
+            MapTideError::IntegerOverflow => PyOverflowError::new_err(e.to_string()),
+            MapTideError::IOError(e) => PyIOError::new_err(e.to_string()),
             _ => PyException::new_err(e.to_string()),
         }
     }
@@ -40,14 +40,14 @@ type RefArr = Vec<[usize; 6]>;
 
 type RefMap = HashMap<String, (RefArr, usize)>;
 
-type BaseCount = HashMap<String, CoordinateMap>;
+type MapTide = HashMap<String, CoordinateMap>;
 
 type RefLengths = HashMap<String, usize>;
 
 /// Open the BAM file located at `bam_path` and return a reader.
 fn get_reader(
     bam_path: String,
-) -> Result<noodles::bam::Reader<noodles::bgzf::Reader<File>>, BaseCountError> {
+) -> Result<noodles::bam::Reader<noodles::bgzf::Reader<File>>, MapTideError> {
     // Open file
     let file = File::open(bam_path)?;
 
@@ -68,7 +68,7 @@ fn count_ref_base(
     ref_pos: usize,
     offset: usize,
     seq_pos: Position,
-) -> Result<(), BaseCountError> {
+) -> Result<(), MapTideError> {
     // Match the base at the given seq_pos, and update the CoordinateMap
     match seq.get(seq_pos) {
         Some(&Base::A) => {
@@ -91,8 +91,8 @@ fn count_ref_base(
             ref_arr[ref_pos - offset - 1][5] += 1;
             Ok(())
         }
-        Some(_) => Err(BaseCountError::InvalidBase),
-        None => Err(BaseCountError::KeyNotFound),
+        Some(_) => Err(MapTideError::InvalidBase),
+        None => Err(MapTideError::KeyNotFound),
     }
 }
 
@@ -103,7 +103,7 @@ fn count_ins_base(
     ref_pos: usize,
     seq_pos: Position,
     ins_pos: usize,
-) -> Result<(), BaseCountError> {
+) -> Result<(), MapTideError> {
     // Match the base at the given seq_pos, and update the CoordinateMap
     match seq.get(seq_pos) {
         Some(&Base::A) => {
@@ -136,8 +136,8 @@ fn count_ins_base(
                 .or_insert_with(|| [0; 6])[5] += 1;
             Ok(())
         }
-        Some(_) => Err(BaseCountError::InvalidBase),
-        None => Err(BaseCountError::KeyNotFound),
+        Some(_) => Err(MapTideError::InvalidBase),
+        None => Err(MapTideError::KeyNotFound),
     }
 }
 
@@ -152,12 +152,12 @@ fn count_record(
     base_quality: usize,
     region_start: usize,
     region_end: usize,
-) -> Result<(), BaseCountError> {
+) -> Result<(), MapTideError> {
     // Positions are 1-based
     // This is the start position of the read in the reference
     let mut ref_pos = record
         .alignment_start()
-        .ok_or_else(|| BaseCountError::AlignmentStartNotFound)?
+        .ok_or_else(|| MapTideError::AlignmentStartNotFound)?
         .get();
 
     // This is the position locally along the sequence (minimum is 1)
@@ -185,7 +185,7 @@ fn count_record(
                     ref_pos += 1;
                     seq_pos = seq_pos
                         .checked_add(1)
-                        .ok_or_else(|| BaseCountError::IntegerOverflow)?;
+                        .ok_or_else(|| MapTideError::IntegerOverflow)?;
                 }
             }
 
@@ -201,7 +201,7 @@ fn count_record(
 
                     seq_pos = seq_pos
                         .checked_add(1)
-                        .ok_or_else(|| BaseCountError::IntegerOverflow)?;
+                        .ok_or_else(|| MapTideError::IntegerOverflow)?;
                 }
             }
 
@@ -220,7 +220,7 @@ fn count_record(
             Kind::SoftClip => {
                 seq_pos = seq_pos
                     .checked_add(cig.len())
-                    .ok_or_else(|| BaseCountError::IntegerOverflow)?;
+                    .ok_or_else(|| MapTideError::IntegerOverflow)?;
             }
 
             // Hardclip and padding don't consume the reference or the sequence
@@ -231,14 +231,14 @@ fn count_record(
 }
 
 /// Check the interval defined by the alignment of `record` intersects the interval defined in `region`.
-fn intersects(record: &Record, region: &Region) -> Result<bool, BaseCountError> {
+fn intersects(record: &Record, region: &Region) -> Result<bool, MapTideError> {
     let seq_start = record
         .alignment_start()
-        .ok_or_else(|| BaseCountError::AlignmentStartNotFound)?;
+        .ok_or_else(|| MapTideError::AlignmentStartNotFound)?;
 
     let seq_end = record
         .alignment_end()
-        .ok_or_else(|| BaseCountError::AlignmentEndNotFound)?;
+        .ok_or_else(|| MapTideError::AlignmentEndNotFound)?;
 
     let seq_interval = Interval::from(seq_start..=seq_end);
 
@@ -254,11 +254,11 @@ fn min_base_quality(
     quals: &QualityScores,
     seq_pos: Position,
     base_quality: usize,
-) -> Result<bool, BaseCountError> {
+) -> Result<bool, MapTideError> {
     let base_qual = usize::from(
         quals
             .get(seq_pos)
-            .ok_or_else(|| BaseCountError::QualityScoreNotFound)?
+            .ok_or_else(|| MapTideError::QualityScoreNotFound)?
             .get(),
     );
 
@@ -270,11 +270,11 @@ fn min_base_quality(
 }
 
 /// Check the mapping score for `record` is greater than or equal to `mapping_quality`.
-fn min_mapping_quality(record: &Record, mapping_quality: usize) -> Result<bool, BaseCountError> {
+fn min_mapping_quality(record: &Record, mapping_quality: usize) -> Result<bool, MapTideError> {
     let map_qual = usize::from(
         record
             .mapping_quality()
-            .ok_or_else(|| BaseCountError::MappingQualityNotFound)?
+            .ok_or_else(|| MapTideError::MappingQualityNotFound)?
             .get(),
     );
 
@@ -285,12 +285,12 @@ fn min_mapping_quality(record: &Record, mapping_quality: usize) -> Result<bool, 
     }
 }
 
-fn init_maps() -> (RefMap, BaseCount, RefLengths) {
+fn init_maps() -> (RefMap, MapTide, RefLengths) {
     // Map of reference names to vector for storing base counts
     let ref_arrs: RefMap = HashMap::new();
 
     // Map of reference names to CoordinateMap, for storing insertion data
-    let ins_maps: BaseCount = BaseCount::new();
+    let ins_maps: MapTide = MapTide::new();
 
     // Map of reference names to reference lengths
     let ref_lengths: RefLengths = HashMap::new();
@@ -305,10 +305,10 @@ fn init_maps() -> (RefMap, BaseCount, RefLengths) {
 /// If `region` is `Some`, initialises array over the region specified.
 fn init_coordinates(
     ref_arrs: &mut RefMap,
-    ins_maps: &mut BaseCount,
+    ins_maps: &mut MapTide,
     ref_lengths: &HashMap<String, usize>,
     region: Option<&Region>,
-) -> Result<(), BaseCountError> {
+) -> Result<(), MapTideError> {
     if let Some(reg) = region {
         let region_name = reg.name();
         let interval = reg.interval();
@@ -316,7 +316,7 @@ fn init_coordinates(
         // Get length of the region name's sequence
         let ref_length = ref_lengths
             .get(region_name)
-            .ok_or_else(|| BaseCountError::KeyNotFound)?;
+            .ok_or_else(|| MapTideError::KeyNotFound)?;
 
         // Handle unbounded region start
         let region_start = match interval.start() {
@@ -357,20 +357,20 @@ fn init_coordinates(
     Ok(())
 }
 
-/// Merge `ref_arrs` into `ins_maps` to have a single `BaseCount` containing all coordinates and counts.
+/// Merge `ref_arrs` into `ins_maps` to have a single `MapTide` containing all coordinates and counts.
 fn merge_into_base_map(
     ref_arrs: &RefMap,
-    mut ins_maps: BaseCount,
+    mut ins_maps: MapTide,
     ref_lengths: &HashMap<String, usize>,
-) -> Result<BaseCount, BaseCountError> {
+) -> Result<MapTide, MapTideError> {
     for (ref_name, _) in ref_lengths.iter() {
         let (ref_arr, offset) = ref_arrs
             .get(ref_name)
-            .ok_or_else(|| BaseCountError::KeyNotFound)?;
+            .ok_or_else(|| MapTideError::KeyNotFound)?;
 
         let ins_map = ins_maps
             .get_mut(ref_name)
-            .ok_or_else(|| BaseCountError::KeyNotFound)?;
+            .ok_or_else(|| MapTideError::KeyNotFound)?;
 
         for (i, row) in ref_arr.iter().enumerate() {
             ins_map.entry(Coordinate(i + offset + 1, 0)).or_insert(*row);
@@ -380,7 +380,7 @@ fn merge_into_base_map(
 }
 
 #[pyfunction]
-fn all_(bam_path: String, mapping_quality: usize, base_quality: usize) -> PyResult<BaseCount> {
+fn all_(bam_path: String, mapping_quality: usize, base_quality: usize) -> PyResult<MapTide> {
     // Create initial maps
     let (mut ref_arrs, mut ins_maps, mut ref_lengths) = init_maps();
 
@@ -416,24 +416,24 @@ fn all_(bam_path: String, mapping_quality: usize, base_quality: usize) -> PyResu
 
         let ref_seq_id = record
             .reference_sequence_id()
-            .ok_or_else(|| BaseCountError::ReferenceSequenceIDNotFound)?;
+            .ok_or_else(|| MapTideError::ReferenceSequenceIDNotFound)?;
 
         let ref_name = ref_seqs
             .get_index(ref_seq_id)
-            .ok_or_else(|| BaseCountError::KeyNotFound)?
+            .ok_or_else(|| MapTideError::KeyNotFound)?
             .0;
 
         let ref_length = ref_lengths
             .get(ref_name)
-            .ok_or_else(|| BaseCountError::KeyNotFound)?;
+            .ok_or_else(|| MapTideError::KeyNotFound)?;
 
         let (ref_arr, offset) = ref_arrs
             .get_mut(ref_name)
-            .ok_or_else(|| BaseCountError::KeyNotFound)?;
+            .ok_or_else(|| MapTideError::KeyNotFound)?;
 
         let ins_map = ins_maps
             .get_mut(ref_name)
-            .ok_or_else(|| BaseCountError::KeyNotFound)?;
+            .ok_or_else(|| MapTideError::KeyNotFound)?;
 
         count_record(
             ref_arr,
@@ -457,7 +457,7 @@ fn query_(
     region: String,
     mapping_quality: usize,
     base_quality: usize,
-) -> PyResult<BaseCount> {
+) -> PyResult<MapTide> {
     // Create initial maps
     let (mut ref_arrs, mut ins_maps, mut ref_lengths) = init_maps();
 
@@ -489,7 +489,7 @@ fn query_(
         Some(x) => x.get(),
         None => *ref_lengths
             .get(region_name)
-            .ok_or_else(|| BaseCountError::KeyNotFound)?,
+            .ok_or_else(|| MapTideError::KeyNotFound)?,
     };
 
     // Initialise coordinates
@@ -506,11 +506,11 @@ fn query_(
 
     let (ref_arr, offset) = ref_arrs
         .get_mut(region_name)
-        .ok_or_else(|| BaseCountError::KeyNotFound)?;
+        .ok_or_else(|| MapTideError::KeyNotFound)?;
 
     let ins_map = ins_maps
         .get_mut(region_name)
-        .ok_or_else(|| BaseCountError::KeyNotFound)?;
+        .ok_or_else(|| MapTideError::KeyNotFound)?;
 
     if let Some(b_path) = bai_path {
         // Read the index file
@@ -542,9 +542,9 @@ fn query_(
                 .get_index(
                     record
                         .reference_sequence_id()
-                        .ok_or_else(|| BaseCountError::ReferenceSequenceIDNotFound)?,
+                        .ok_or_else(|| MapTideError::ReferenceSequenceIDNotFound)?,
                 )
-                .ok_or_else(|| BaseCountError::IndexNotFound)?
+                .ok_or_else(|| MapTideError::IndexNotFound)?
                 .0;
 
             if record.flags().intersects(flags)
@@ -591,7 +591,7 @@ fn parse_region_(region: String) -> PyResult<(String, Option<usize>, Option<usiz
 
 /// A Python module implemented in Rust.
 #[pymodule]
-fn basecount(_py: Python, m: &PyModule) -> PyResult<()> {
+fn maptide(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(all_, m)?)?;
     m.add_function(wrap_pyfunction!(query_, m)?)?;
     m.add_function(wrap_pyfunction!(parse_region_, m)?)?;

@@ -15,14 +15,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
 
 [[package]]
-name = "basecount"
-version = "0.1.0"
-dependencies = [
- "noodles",
- "pyo3",
-]
-
-[[package]]
 name = "bit-vec"
 version = "0.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -190,6 +182,14 @@ checksum = "435011366fe56583b16cf956f9df0095b405b82d76425bc8981c0e22e60ec4df"
 dependencies = [
  "autocfg",
  "scopeguard",
+]
+
+[[package]]
+name = "maptide"
+version = "0.1.0"
+dependencies = [
+ "noodles",
+ "pyo3",
 ]
 
 [[package]]

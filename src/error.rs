@@ -4,7 +4,7 @@ use std::fmt::{self, Display};
 use std::io;
 
 #[derive(Debug)]
-pub enum BaseCountError {
+pub enum MapTideError {
     KeyNotFound,
     IndexNotFound,
     InvalidBase,
@@ -18,43 +18,41 @@ pub enum BaseCountError {
     ParseError(region::ParseError),
 }
 
-impl From<io::Error> for BaseCountError {
+impl From<io::Error> for MapTideError {
     fn from(e: io::Error) -> Self {
-        BaseCountError::IOError(e)
+        MapTideError::IOError(e)
     }
 }
 
-impl From<region::ParseError> for BaseCountError {
+impl From<region::ParseError> for MapTideError {
     fn from(e: region::ParseError) -> Self {
-        BaseCountError::ParseError(e)
+        MapTideError::ParseError(e)
     }
 }
 
-impl Display for BaseCountError {
+impl Display for MapTideError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            BaseCountError::KeyNotFound => f.write_str("KeyNotFound"),
-            BaseCountError::IndexNotFound => f.write_str("IndexNotFound"),
-            BaseCountError::InvalidBase => f.write_str("InvalidBase"),
-            BaseCountError::IntegerOverflow => f.write_str("IntegerOverlow"),
-            BaseCountError::AlignmentStartNotFound => f.write_str("AlignmentStartNotFound"),
-            BaseCountError::AlignmentEndNotFound => f.write_str("AlignmentEndNotFound"),
-            BaseCountError::MappingQualityNotFound => f.write_str("MappingQualityNotFound"),
-            BaseCountError::QualityScoreNotFound => f.write_str("QualityScoreNotFound"),
-            BaseCountError::ReferenceSequenceIDNotFound => {
-                f.write_str("ReferenceSequenceIDNotFound")
-            }
-            BaseCountError::IOError(ref _e) => f.write_str("IOError"),
-            BaseCountError::ParseError(ref _e) => f.write_str("ParseError"),
+            MapTideError::KeyNotFound => f.write_str("KeyNotFound"),
+            MapTideError::IndexNotFound => f.write_str("IndexNotFound"),
+            MapTideError::InvalidBase => f.write_str("InvalidBase"),
+            MapTideError::IntegerOverflow => f.write_str("IntegerOverlow"),
+            MapTideError::AlignmentStartNotFound => f.write_str("AlignmentStartNotFound"),
+            MapTideError::AlignmentEndNotFound => f.write_str("AlignmentEndNotFound"),
+            MapTideError::MappingQualityNotFound => f.write_str("MappingQualityNotFound"),
+            MapTideError::QualityScoreNotFound => f.write_str("QualityScoreNotFound"),
+            MapTideError::ReferenceSequenceIDNotFound => f.write_str("ReferenceSequenceIDNotFound"),
+            MapTideError::IOError(ref _e) => f.write_str("IOError"),
+            MapTideError::ParseError(ref _e) => f.write_str("ParseError"),
         }
     }
 }
 
-impl Error for BaseCountError {
+impl Error for MapTideError {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         match *self {
-            BaseCountError::IOError(ref e) => Some(e),
-            BaseCountError::ParseError(ref e) => Some(e),
+            MapTideError::IOError(ref e) => Some(e),
+            MapTideError::ParseError(ref e) => Some(e),
             _ => None,
         }
     }

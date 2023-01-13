@@ -1,4 +1,4 @@
-# `basecount`
+# `maptide`
 
 ## Setup
 Current setup instructions require Rust to be installed.
@@ -7,8 +7,8 @@ Installation instructions for Rust can be found here: https://www.rust-lang.org/
 
 Once Rust is installed:
 ```
-$ git clone https://github.com/CLIMB-COVID/basecount.git
-$ cd basecount/
+$ git clone https://github.com/CLIMB-COVID/maptide.git
+$ cd maptide/
 $ python -m venv env
 $ source env/bin/activate
 $ pip install --upgrade pip
@@ -17,8 +17,8 @@ $ pip install .
 
 ## Usage
 ```
-$ basecount -h
-usage: basecount [-h] [--region REGION] [--index INDEX] [--mapq MAPQ] [--baseq BASEQ] [--noindex] [--stats] [--decimals DECIMALS] bam
+$ maptide -h
+usage: maptide [-h] [--region REGION] [--index INDEX] [--mapq MAPQ] [--baseq BASEQ] [--noindex] [--stats] [--decimals DECIMALS] bam
 
 positional arguments:
   bam                  Path to BAM file
@@ -36,21 +36,21 @@ optional arguments:
 
 ##### Frequencies over all positions in the reference:
 ```
-$ basecount /path/to/file.bam
+$ maptide /path/to/file.bam
 ```
 
 ##### Frequencies over a specific region (with an index file):
 If the index file has the same path as the BAM file, but with `.bai` appended on the end: 
 ```
-$ basecount /path/to/file.bam --region chrom:start-end
+$ maptide /path/to/file.bam --region chrom:start-end
 ```
 
 Otherwise, the path needs to be specified:
 ```
-$ basecount /path/to/file.bam --region chrom:start-end --index /path/to/index.bai
+$ maptide /path/to/file.bam --region chrom:start-end --index /path/to/index.bai
 ```
 
 ##### Frequencies over a specific region (without an index file):
 ```
-$ basecount /path/to/file.bam chrom:start-end --region chrom:start-end --noindex
+$ maptide /path/to/file.bam chrom:start-end --region chrom:start-end --noindex
 ```

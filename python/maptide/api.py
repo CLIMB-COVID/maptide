@@ -1,4 +1,4 @@
-from .basecount import all_, query_, parse_region_
+from .maptide import all_, query_, parse_region_
 from typing import Optional
 
 

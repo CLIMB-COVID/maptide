@@ -3,7 +3,7 @@ requires = ["maturin>=0.14,<0.15"]
 build-backend = "maturin"
 
 [project]
-name = "basecount"
+name = "maptide"
 requires-python = ">=3.7"
 classifiers = [
     "Programming Language :: Rust",
@@ -12,7 +12,7 @@ classifiers = [
 ]
 
 [project.scripts]
-basecount = "basecount.cli:run"
+maptide = "maptide.cli:run"
 
 [tool.maturin]
 python-source = "python"
