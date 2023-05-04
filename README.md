@@ -1,11 +1,18 @@
 # `maptide`
 
 ## Setup
-Current setup instructions require Rust to be installed.
+##### Install via pip
+```
+pip install maptide
+```
+Depending on your operating system, the Rust compiler may have to be installed.
 
-Installation instructions for Rust can be found here: https://www.rust-lang.org/tools/install
+Installation instructions for the Rust compiler can be found here: https://www.rust-lang.org/tools/install
 
-Once Rust is installed:
+##### Build from source
+Building from source requires the Rust compiler.
+
+Once the Rust compiler is installed:
 ```
 $ git clone https://github.com/CLIMB-COVID/maptide.git
 $ cd maptide/
