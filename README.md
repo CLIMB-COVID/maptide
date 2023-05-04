@@ -3,7 +3,7 @@
 ## Setup
 #### Install via pip
 ```
-pip install maptide
+$ pip install maptide
 ```
 Depending on your operating system, the Rust compiler may have to be installed.
 
