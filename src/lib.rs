@@ -287,13 +287,13 @@ fn min_mapping_quality(record: &Record, mapping_quality: usize) -> Result<bool, 
 
 fn init_maps() -> (RefMap, MapTide, RefLengths) {
     // Map of reference names to vector for storing base counts
-    let ref_arrs: RefMap = HashMap::new();
+    let ref_arrs: RefMap = RefMap::new();
 
     // Map of reference names to CoordinateMap, for storing insertion data
     let ins_maps: MapTide = MapTide::new();
 
     // Map of reference names to reference lengths
-    let ref_lengths: RefLengths = HashMap::new();
+    let ref_lengths: RefLengths = RefLengths::new();
 
     (ref_arrs, ins_maps, ref_lengths)
 }
@@ -306,7 +306,7 @@ fn init_maps() -> (RefMap, MapTide, RefLengths) {
 fn init_coordinates(
     ref_arrs: &mut RefMap,
     ins_maps: &mut MapTide,
-    ref_lengths: &HashMap<String, usize>,
+    ref_lengths: &RefLengths,
     region: Option<&Region>,
 ) -> Result<(), MapTideError> {
     if let Some(reg) = region {
@@ -361,7 +361,7 @@ fn init_coordinates(
 fn merge_into_base_map(
     ref_arrs: &RefMap,
     mut ins_maps: MapTide,
-    ref_lengths: &HashMap<String, usize>,
+    ref_lengths: &RefLengths,
 ) -> Result<MapTide, MapTideError> {
     for (ref_name, _) in ref_lengths.iter() {
         let (ref_arr, offset) = ref_arrs

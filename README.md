@@ -1,11 +1,18 @@
 # `maptide`
 
 ## Setup
-Current setup instructions require Rust to be installed.
+#### Install via pip
+```
+$ pip install maptide
+```
+Depending on your operating system, the Rust compiler may have to be installed.
 
-Installation instructions for Rust can be found here: https://www.rust-lang.org/tools/install
+Installation instructions for the Rust compiler can be found here: https://www.rust-lang.org/tools/install
 
-Once Rust is installed:
+#### Build from source
+Building from source requires the Rust compiler.
+
+Once the Rust compiler is installed:
 ```
 $ git clone https://github.com/CLIMB-COVID/maptide.git
 $ cd maptide/
@@ -34,12 +41,12 @@ optional arguments:
   --decimals DECIMALS  Number of decimal places to display (default: 3)
 ```
 
-##### Frequencies over all positions in the reference:
+#### Frequencies over all positions in the reference:
 ```
 $ maptide /path/to/file.bam
 ```
 
-##### Frequencies over a specific region (with an index file):
+#### Frequencies over a specific region (with an index file):
 If the index file has the same path as the BAM file, but with `.bai` appended on the end: 
 ```
 $ maptide /path/to/file.bam --region chrom:start-end
@@ -50,7 +57,7 @@ Otherwise, the path needs to be specified:
 $ maptide /path/to/file.bam --region chrom:start-end --index /path/to/index.bai
 ```
 
-##### Frequencies over a specific region (without an index file):
+#### Frequencies over a specific region (without an index file):
 ```
 $ maptide /path/to/file.bam chrom:start-end --region chrom:start-end --noindex
 ```
