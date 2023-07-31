@@ -380,7 +380,7 @@ fn merge_into_base_map(
 }
 
 #[pyfunction]
-fn all_(bam_path: String, mapping_quality: usize, base_quality: usize) -> PyResult<MapTide> {
+fn all(bam_path: String, mapping_quality: usize, base_quality: usize) -> PyResult<MapTide> {
     // Create initial maps
     let (mut ref_arrs, mut ins_maps, mut ref_lengths) = init_maps();
 
@@ -451,7 +451,7 @@ fn all_(bam_path: String, mapping_quality: usize, base_quality: usize) -> PyResu
 }
 
 #[pyfunction]
-fn query_(
+fn query(
     bam_path: String,
     bai_path: Option<String>,
     region: String,
@@ -572,7 +572,7 @@ fn query_(
 }
 
 #[pyfunction]
-fn parse_region_(region: String) -> PyResult<(String, Option<usize>, Option<usize>)> {
+fn parse_region(region: String) -> PyResult<(String, Option<usize>, Option<usize>)> {
     let region: Region = region
         .parse()
         .map_err(|x: ParseError| PyException::new_err(x.to_string()))?;
@@ -592,9 +592,9 @@ fn parse_region_(region: String) -> PyResult<(String, Option<usize>, Option<usiz
 /// A Python module implemented in Rust.
 #[pymodule]
 fn maptide(_py: Python, m: &PyModule) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(all_, m)?)?;
-    m.add_function(wrap_pyfunction!(query_, m)?)?;
-    m.add_function(wrap_pyfunction!(parse_region_, m)?)?;
+    m.add_function(wrap_pyfunction!(all, m)?)?;
+    m.add_function(wrap_pyfunction!(query, m)?)?;
+    m.add_function(wrap_pyfunction!(parse_region, m)?)?;
 
     Ok(())
 }
