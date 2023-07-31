@@ -5,4 +5,3 @@
 #     __all__ = maptide.__all__
 
 from .api import query, parse_region
-del api

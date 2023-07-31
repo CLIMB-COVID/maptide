@@ -1,15 +1,15 @@
-from .maptide import all_, query_, parse_region_
-from typing import Optional
+import os
+from typing import Dict, Tuple, List
+from . import maptide  #  type: ignore
 
 
 def query(
     bam: str,
-    region: Optional[str] = None,
-    bai: Optional[str] = None,
+    region: str | None = None,
+    bai: str | None = None,
     mapping_quality: int = 0,
     base_quality: int = 0,
-    indexed=True,
-):
+) -> Dict[Tuple[int, int], List[int]]:
     """Obtain base frequencies from the provided BAM file.
 
     Required arguments:
@@ -19,24 +19,16 @@ def query(
         `bai`
         `mapping_quality`
         `base_quality`
-        `indexed`
     Returns:
-        A `dict` mapping tuples of the form `(int, int)` to base frequencies.     
+        A `dict` mapping tuples of the form `(int, int)` to base frequencies.
     """
-
-    if not indexed and bai:
-        raise Exception("Cannot set indexed=False while also providing a BAI file")
-
     if region:
-        if indexed:
-            if not bai:
-                bai = bam + ".bai"
-            return query_(bam, bai, region, mapping_quality, base_quality)
-        else:
-            return query_(bam, None, region, mapping_quality, base_quality)
+        if not bai and os.path.isfile(bam + ".bai"):
+            bai = bam + ".bai"
+        return maptide.query(bam, bai, region, mapping_quality, base_quality)
     else:
-        return all_(bam, mapping_quality, base_quality)
+        return maptide.all(bam, mapping_quality, base_quality)
 
 
 def parse_region(region: str):
-    return parse_region_(region)
+    return maptide.parse_region(region)
