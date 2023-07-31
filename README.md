@@ -25,19 +25,25 @@ $ pip install .
 ## Usage
 ```
 $ maptide -h
-usage: maptide [-h] [--region REGION] [--index INDEX] [--mapq MAPQ] [--baseq BASEQ] [--stats] [--decimals DECIMALS] bam
+usage: maptide [-h] [-v] [-r REGION] [-i INDEX] [-m MAPPING_QUALITY] [-b BASE_QUALITY] [-s] [-d DECIMALS] bam
 
 positional arguments:
-  bam                  Path to BAM file
+  bam                   Path to BAM file
 
 options:
-  -h, --help           show this help message and exit
-  --region REGION      Region to view, specified in the form CHROM:START-END (default: everything)
-  --index INDEX        Path to index (BAI) file (default: </path/to/bam>.bai)
-  --mapq MAPQ          Minimum mapping quality (default: 0)
-  --baseq BASEQ        Minimum base quality (default: 0)
-  --stats              Output additional per-position statistics (default: False)
-  --decimals DECIMALS  Number of decimal places to display (default: 3)
+  -h, --help            show this help message and exit
+  -v, --version         Client version number.
+  -r REGION, --region REGION
+                        Region to view, specified in the form CHROM:START-END (default: everything)
+  -i INDEX, --index INDEX
+                        Path to index (BAI) file (default: </path/to/bam>.bai)
+  -m MAPPING_QUALITY, --mapping-quality MAPPING_QUALITY
+                        Minimum mapping quality (default: 0)
+  -b BASE_QUALITY, --base-quality BASE_QUALITY
+                        Minimum base quality (default: 0)
+  -s, --stats           Output additional per-position statistics (default: False)
+  -d DECIMALS, --decimals DECIMALS
+                        Number of decimal places to display (default: 3)
 ```
 
 #### Frequencies over all positions:
@@ -51,7 +57,7 @@ $ maptide /path/to/file.bam --region chrom:start-end
 ```
 If a region is specified, `maptide` will check for an index file with the same path as the BAM file, but with `.bai` appended on the end (i.e. `/path/to/file.bam.bai`).
 
-If it cannot find an index file in this location, `maptide` will still run anyway, just without an index file.
+If an index file does not exist in this location, `maptide` will still run anyway, just without an index file.
 
 Index files that do not follow the naming convention `/path/to/file.bam.bai` can still be used, but a path to the file needs to be provided:
 ```
