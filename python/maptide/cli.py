@@ -61,7 +61,6 @@ def run():
         "--version",
         action="version",
         version=pkg_resources.get_distribution("maptide").version,
-        help="Client version number.",
     )
     parser.add_argument(
         "-r",

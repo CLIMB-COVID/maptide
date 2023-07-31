@@ -32,7 +32,7 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  -v, --version         Client version number.
+  -v, --version         show program's version number and exit
   -r REGION, --region REGION
                         Region to view, specified in the form CHROM:START-END (default: everything)
   -i INDEX, --index INDEX
