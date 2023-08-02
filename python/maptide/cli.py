@@ -1,8 +1,9 @@
-from .api import query, parse_region
 import argparse
 import math
 import sys
 import csv
+import pkg_resources
+from . import api
 
 
 def entropy(probabilities, normalised=False):
@@ -36,7 +37,7 @@ def get_stats(counts, decimals=3):
 
 def iterate(data, region=None, stats=False, decimals=3):
     if region:
-        chrom, start, end = parse_region(region)
+        chrom, start, end = api.parse_region(region)
         for (pos, ins_pos), row in sorted(data[chrom].items()):
             if (not start or pos >= start) and (not end or pos <= end):
                 if stats:
@@ -54,42 +55,46 @@ def iterate(data, region=None, stats=False, decimals=3):
 
 def run():
     parser = argparse.ArgumentParser()
-    index_group = parser.add_mutually_exclusive_group()
     parser.add_argument("bam", help="Path to BAM file")
     parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        version=pkg_resources.get_distribution("maptide").version,
+    )
+    parser.add_argument(
+        "-r",
         "--region",
         help="Region to view, specified in the form CHROM:START-END (default: everything)",
     )
-    index_group.add_argument(
+    parser.add_argument(
+        "-i",
         "--index",
-        default=None,
         help="Path to index (BAI) file (default: </path/to/bam>.bai)",
     )
     parser.add_argument(
-        "--mapq",
+        "-m",
+        "--mapping-quality",
         type=int,
         default=0,
         help="Minimum mapping quality (default: %(default)s)",
     )
     parser.add_argument(
-        "--baseq",
+        "-b",
+        "--base-quality",
         type=int,
         default=0,
         help="Minimum base quality (default: %(default)s)",
     )
-    index_group.add_argument(
-        "--noindex",
-        action="store_true",
-        default=False,
-        help="Do not use an index file when querying the BAM file (default: %(default)s)",
-    )
     parser.add_argument(
+        "-s",
         "--stats",
         action="store_true",
         default=False,
         help="Output additional per-position statistics (default: %(default)s)",
     )
     parser.add_argument(
+        "-d",
         "--decimals",
         type=int,
         default=3,
@@ -128,13 +133,12 @@ def run():
     writer = csv.writer(sys.stdout, delimiter="\t")
     writer.writerow(columns)
 
-    data = query(
+    data = api.query(
         bam=args.bam,
         region=args.region,
         bai=args.index,
-        mapping_quality=args.mapq,
-        base_quality=args.baseq,
-        indexed=not args.noindex,
+        mapping_quality=args.mapping_quality,
+        base_quality=args.base_quality,
     )
 
     for row in iterate(
