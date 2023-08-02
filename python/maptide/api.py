@@ -39,5 +39,17 @@ def query(
         return maptide.all(bam, mapping_quality, base_quality)
 
 
-def parse_region(region: str):
+def parse_region(region: str) -> Tuple[str, int, int]:
+    """Parses a region of the form `CHROM:START-END`, returning the tuple `(CHROM, START, END)`.
+
+    Parameters
+    ----------
+    region : str
+        Region to parse.
+
+    Returns
+    -------
+    tuple
+        Parsed region tuple.
+    """
     return maptide.parse_region(region)
