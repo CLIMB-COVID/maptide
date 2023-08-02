@@ -9,19 +9,28 @@ def query(
     bai: str | None = None,
     mapping_quality: int = 0,
     base_quality: int = 0,
-) -> Dict[Tuple[int, int], List[int]]:
-    """Obtain base frequencies from the provided BAM file.
+) -> Dict[str, Dict[Tuple[int, int], List[int]]]:
+    """Performs a pileup over a region, obtaining per-position base frequencies for the provided BAM file.
 
-    Required arguments:
-        `bam`: Path to the BAM file.
-    Optional arguments:
-        `region`
-        `bai`
-        `mapping_quality`
-        `base_quality`
-    Returns:
-        A `dict` mapping tuples of the form `(int, int)` to base frequencies.
+    Parameters
+    ----------
+    bam : str
+        Path to the BAM file.
+    region : str, optional
+        Region to query, in the form `CHROM:START-END` (default: all positions)
+    bai : str, optional
+        Path to index file (default: same path as the BAM file, but with .bai appended)
+    mapping_quality : int, optional
+        Minimum mapping quality for a read to be included in the pileup (default: 0)
+    base_quality : int, optional
+        Minimum base quality for a base within a read to be included in the pileup (default: 0)
+
+    Returns
+    -------
+    dict
+        Mapping: reference -> (reference position, insert position) -> [base frequencies].
     """
+
     if region:
         if not bai and os.path.isfile(bam + ".bai"):
             bai = bam + ".bai"
