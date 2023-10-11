@@ -108,23 +108,12 @@ def run():
         "pos",
         "ins",
         "cov",
-        "a",
-        "c",
-        "g",
-        "t",
-        "ds",
-        "n",
-    ]
+    ] + [base.lower() for base in api.BASES]
 
     if args.stats:
         columns.extend(
-            [
-                "pc_a",
-                "pc_c",
-                "pc_g",
-                "pc_t",
-                "pc_ds",
-                "pc_n",
+            [f"pc_{base.lower()}" for base in api.BASES]
+            + [
                 "entropy",
                 "secondary_entropy",
             ]

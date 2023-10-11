@@ -1,6 +1,9 @@
 import os
-from typing import Dict, Tuple, List, Optional
+from typing import Dict, Tuple, Optional, Any
 from . import maptide  #  type: ignore
+
+
+BASES = ["A", "C", "G", "T", "DS", "N"]
 
 
 def query(
@@ -9,7 +12,8 @@ def query(
     bai: Optional[str] = None,
     mapping_quality: int = 0,
     base_quality: int = 0,
-) -> Dict[str, Dict[Tuple[int, int], List[int]]]:
+    annotated: bool = False,
+) -> Dict[str, Dict[Tuple[int, int], Any]]:
     """Performs a pileup over a region, obtaining per-position base frequencies for the provided BAM file.
 
     Parameters
@@ -24,6 +28,8 @@ def query(
         Minimum mapping quality for a read to be included in the pileup (default: 0)
     base_quality : int, optional
         Minimum base quality for a base within a read to be included in the pileup (default: 0)
+    annotated : bool, optional
+        Return frequencies annotated with their bases, as a `dict[str, int]`. Default is to return frequencies only, as a `list[int]` (default: False)
 
     Returns
     -------
@@ -34,9 +40,16 @@ def query(
     if region:
         if not bai and os.path.isfile(bam + ".bai"):
             bai = bam + ".bai"
-        return maptide.query(bam, bai, region, mapping_quality, base_quality)
+        data = maptide.query(bam, bai, region, mapping_quality, base_quality)
     else:
-        return maptide.all(bam, mapping_quality, base_quality)
+        data = maptide.all(bam, mapping_quality, base_quality)
+
+    if annotated:
+        for _, positions in data.items():
+            for position, frequencies in positions.items():
+                positions[position] = dict(zip(BASES, frequencies))
+
+    return data
 
 
 def parse_region(region: str) -> Tuple[str, int, int]:
