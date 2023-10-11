@@ -5,12 +5,11 @@
 ```
 $ pip install maptide
 ```
-Depending on your operating system, the Rust compiler may need to be installed.
-
-Installation instructions for the Rust compiler can be found here: https://www.rust-lang.org/tools/install
 
 #### Build from source
 Building from source requires the Rust compiler.
+
+Installation instructions for the Rust compiler can be found here: https://www.rust-lang.org/tools/install
 
 Once the Rust compiler is installed:
 ```
@@ -46,12 +45,12 @@ options:
                         Number of decimal places to display (default: 3)
 ```
 
-#### Frequencies over all positions:
+#### Frequencies over all positions
 ```
 $ maptide /path/to/file.bam
 ```
 
-#### Frequencies over a region:
+#### Frequencies over a region
 ```
 $ maptide /path/to/file.bam --region chrom:start-end
 ```
@@ -62,4 +61,26 @@ If an index file does not exist in this location, `maptide` will still run anywa
 Index files that do not follow the naming convention `/path/to/file.bam.bai` can still be used, but a path to the file needs to be provided:
 ```
 $ maptide /path/to/file.bam --region chrom:start-end --index /path/to/index.bai
+```
+
+#### Example in Python
+`maptide` can be used within Python scripts:
+
+```python
+import maptide
+
+data = maptide.query(
+    "path/to/file.bam",
+    region="MN908947.3:100-200",  # Obtain frequencies only in this region
+    annotated=True,  # Annotate frequencies with their bases A,C,G,T,DS,N
+)
+
+chrom = "MN908947.3"  # Chosen reference/chromosome in the BAM to access
+position = (100, 0)  # Position 100, insert 0 (i.e. not an insertion)
+
+# With annotated = True, frequencies are annotated with their bases:
+frequencies = data[chrom][position]
+print(frequencies)  # {'A': 1, 'C': 122, 'G': 0, 'T': 1, 'DS': 13, 'N': 0}
+
+# If annotated = False, frequencies would be a list i.e. [1, 122, 0, 1, 13, 0]
 ```
