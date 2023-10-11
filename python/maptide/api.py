@@ -1,12 +1,12 @@
 import os
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple, List, Optional
 from . import maptide  #  type: ignore
 
 
 def query(
     bam: str,
-    region: str | None = None,
-    bai: str | None = None,
+    region: Optional[str] = None,
+    bai: Optional[str] = None,
     mapping_quality: int = 0,
     base_quality: int = 0,
 ) -> Dict[str, Dict[Tuple[int, int], List[int]]]:
