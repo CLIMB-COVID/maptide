@@ -87,6 +87,30 @@ def run():
         help="Minimum base quality (default: %(default)s)",
     )
     parser.add_argument(
+        "--supplementary",
+        action="store_true",
+        default=False,
+        help="Include supplementary alignments (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--secondary",
+        action="store_true",
+        default=False,
+        help="Include secondary alignments (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--qc-fail",
+        action="store_true",
+        default=False,
+        help="Include reads failing quality control (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--duplicate",
+        action="store_true",
+        default=False,
+        help="Include duplicate reads (default: %(default)s)",
+    )
+    parser.add_argument(
         "-s",
         "--stats",
         action="store_true",
