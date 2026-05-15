@@ -8,14 +8,13 @@ mod types;
 use error::MapTideError;
 use flags::get_filter_flags;
 use noodles::bam::bai;
-use noodles::core::region::{Interval, ParseError};
+use noodles::core::region::ParseError;
 use noodles::core::Region;
-use noodles::sam::alignment::Record;
 use pileup::{count_record, min_mapping_quality};
 use pyo3::exceptions::{PyException, PyIOError, PyIndexError, PyKeyError, PyOverflowError};
 use pyo3::prelude::*;
 use reader::get_reader;
-use region::validate_region;
+use region::{intersects_region, validate_region};
 use types::{CoordinateMap, MapTide, RefLengths, RefMap};
 
 impl From<MapTideError> for PyErr {
@@ -27,25 +26,6 @@ impl From<MapTideError> for PyErr {
             MapTideError::IOError(e) => PyIOError::new_err(e.to_string()),
             _ => PyException::new_err(e.to_string()),
         }
-    }
-}
-
-/// Check the interval defined by the alignment of `record` intersects the interval defined in `region`.
-fn intersects(record: &Record, region: &Region) -> Result<bool, MapTideError> {
-    let seq_start = record
-        .alignment_start()
-        .ok_or_else(|| MapTideError::AlignmentStartNotFound)?;
-
-    let seq_end = record
-        .alignment_end()
-        .ok_or_else(|| MapTideError::AlignmentEndNotFound)?;
-
-    let seq_interval = Interval::from(seq_start..=seq_end);
-
-    if region.interval().intersects(seq_interval) {
-        Ok(true)
-    } else {
-        Ok(false)
     }
 }
 
@@ -314,7 +294,7 @@ fn query(
 
             if record.flags().intersects(flags)
                 || record_ref_name != region.name()
-                || !intersects(&record, &region)?
+                || !intersects_region(&record, &region)?
                 || !min_mapping_quality(&record, mapping_quality)?
             {
                 continue;
