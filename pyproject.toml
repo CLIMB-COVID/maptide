@@ -26,7 +26,7 @@ classifiers = [
 maptide = "maptide.cli:run"
 
 [project.urls]
-repository = "https://github.com/CLIMB-TRE/maptide"
+GitHub = "https://github.com/CLIMB-TRE/maptide"
 
 [tool.maturin]
 python-source = "python"
