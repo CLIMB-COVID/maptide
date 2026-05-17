@@ -28,9 +28,8 @@ pub fn get_filter_flags(
 
 #[cfg(test)]
 mod tests {
-    use noodles::sam::record::Flags;
-
     use super::get_filter_flags;
+    use noodles::sam::record::Flags;
 
     #[test]
     fn test_get_filter_flags() {

@@ -53,13 +53,14 @@ mod tests {
     }
 
     #[test]
-    fn test_validate_region() {
-        // Valid regions
+    fn test_validate_region_valid() {
         assert!(validate_region("chr1").is_ok());
         assert!(validate_region("chr1:100").is_ok());
         assert!(validate_region("chr1:100-200").is_ok());
+    }
 
-        // Invalid regions
+    #[test]
+    fn test_validate_region_invalid() {
         assert!(validate_region("chr1:").is_err());
         assert!(validate_region("chr1:100-").is_err());
         assert!(validate_region("chr1:-100").is_err());

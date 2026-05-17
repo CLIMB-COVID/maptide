@@ -62,13 +62,18 @@ impl Error for MapTideError {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use crate::error::MapTideError;
+    use noodles::core::region;
     use std::error::Error;
+    use std::io;
 
     #[test]
     fn test_error_variant_display() {
         assert_eq!(
-            format!("{}", MapTideError::Error("something went wrong".to_string())),
+            format!(
+                "{}",
+                MapTideError::Error("something went wrong".to_string())
+            ),
             "something went wrong"
         );
     }
